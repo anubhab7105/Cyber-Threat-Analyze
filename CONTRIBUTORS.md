@@ -1,7 +1,3 @@
-
-## CONTRIBUTORS.md
-
-```markdown
 # Project Contributors
 
 ## Core Developers
