@@ -1,3 +1,18 @@
+"""
+Website Security Scanner Module
+Developed by: Soumyajit Dutta
+GitHub: https://github.com/soumyajit-cys
+Date: [Date of Development]
+
+This module performs security checks on websites including:
+- Sensitive file exposure scanning
+- Security header analysis
+- HTTPS configuration checks
+- Directory listing detection
+- Breached domain verification
+- HTTP method analysis
+"""
+
 import requests
 from urllib.parse import urlparse
 import time
