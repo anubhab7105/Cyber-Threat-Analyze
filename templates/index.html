@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Threat Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="data:,">
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Security Logo" class="logo" onerror="this.style.display='none'">
+        <h1>Threat Analyzer</h1>
+        <div class="input-group">
+            <label for="urlInput">Enter URL to Analyze:</label>
+            <input type="url" id="urlInput" placeholder="https://example.com" required>
+            <button id="analyzeBtn">Analyze URL</button>
+        </div>
+        <div class="loading" id="loadingSpinner"></div>
+        <div id="resultContainer" class="hidden">
+            <h2>Analysis Results:</h2>
+            <div id="threatStatus" class="result-box">
+                <p><span class="label">Verdict:</span> <span id="verdictText">-</span></p>
+                <p><span class="label">Risk Score:</span> <span id="riskScore">-</span></p>
+                <p><span class="label">Issues Found:</span> <span id="detailsText">-</span></p>
+                <p><span class="label">Scan Duration:</span> <span id="scanTime">-</span></p>
+            </div>
+            <div id="analysis" class="result-box">
+                <h3>Threat Assessment:</h3>
+                <div id="analysisText" class="safe"></div>
+            </div>
+            <div id="technicalDetails" class="result-box">
+                <h3>Technical Analysis:</h3>
+                <div id="technicalData"></div>
+            </div>
+        </div>
+        <div id="errorContainer" class="hidden result-box danger">
+            <h3>Error:</h3>
+            <p id="errorText"></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            analyzeBtn.addEventListener('click', analyzeUrl);
+            
+            // Add Enter key support
+            document.getElementById('urlInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') analyzeUrl();
+            });
+        });
+
+        async function analyzeUrl() {
+            const loader = document.getElementById('loadingSpinner');
+            const urlInput = document.getElementById('urlInput');
+            const resultContainer = document.getElementById('resultContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            const verdictText = document.getElementById('verdictText');
+            const riskScore = document.getElementById('riskScore');
+            const detailsText = document.getElementById('detailsText');
+            const technicalData = document.getElementById('technicalData');
+            const analysisText = document.getElementById('analysisText');
+            const scanTime = document.getElementById('scanTime');
+            const errorText = document.getElementById('errorText');
+
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                showError('Please enter a valid URL');
+                return;
+            }
+            
+            // Validate URL format
+            if (!isValidUrl(url)) {
+                showError('Please enter a valid URL starting with http:// or https://');
+                return;
+            }
+
+            try {
+                // Reset UI
+                errorContainer.classList.add('hidden');
+                resultContainer.classList.add('hidden');
+                loader.style.display = 'block';
+                
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    showError(data.error);
+                    return;
+                }
+                
+                // Display results
+                resultContainer.classList.remove('hidden');
+                verdictText.textContent = data.verdict;
+                verdictText.className = data.is_risky ? 'danger' : 'safe';
+                riskScore.textContent = `${data.risk_score}%`;
+                riskScore.style.color = getRiskColor(data.risk_score);
+                detailsText.textContent = data.message;
+                scanTime.textContent = data.scan_time;
+                
+                // Display analysis with proper formatting
+                analysisText.innerHTML = data.analysis.replace(/\n/g, '<br>');
+                analysisText.className = data.is_risky ? 'danger' : 'safe';
+                
+                // Display technical details with links
+                technicalData.innerHTML = data.technical_details
+                    .map(finding => `<p>${finding}</p>`)
+                    .join('');
+
+            } catch (error) {
+                showError('Error analyzing URL. Please try again.');
+                console.error('Error:', error);
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+        
+        function showError(message) {
+            const errorContainer = document.getElementById('errorContainer');
+            const errorText = document.getElementById('errorText');
+            
+            errorText.textContent = message;
+            errorContainer.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+        }
+        
+        function isValidUrl(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch {
+                return false;
+            }
+        }
+        
+        function getRiskColor(score) {
+            if (score > 80) return '#ff4444';
+            if (score > 60) return '#ff6b6b';
+            if (score > 40) return '#ffaa33';
+            if (score > 20) return '#ffff00';
+            return '#00ff88';
+        }
+    </script>
+</body>
+</html>
