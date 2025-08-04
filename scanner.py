@@ -2,7 +2,7 @@
 Website Security Scanner Module
 Developed by: Soumyajit Dutta
 GitHub: https://github.com/soumyajit-cys
-Date: [Date of Development]
+Date: May, 2025
 
 This module performs security checks on websites including:
 - Sensitive file exposure scanning
