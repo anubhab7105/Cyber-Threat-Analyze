@@ -1,7 +1,5 @@
 # AI-Powered Cyber Threat Analyzer
 
-![Threat Analyzer Interface](screenshot.png)
-
 A modern web application that analyzes URLs for potential security threats using AI-driven assessment. Provides real-time risk scoring, threat verdicts, and technical insights with a sleek cyber-themed interface.
 
 ## Features
