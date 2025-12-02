@@ -40,6 +40,6 @@ A modern web application that analyzes URLs for potential security threats using
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/AI-Powered-Cyber-Threat-Analyzer.git
-cd AI-Powered-Cyber-Threat-Analyzer
+git clone https://github.com/anubhab7105/Cyber-Threat-Analyzer.git
+cd Cyber-Threat-Analyze
 
