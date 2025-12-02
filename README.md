@@ -40,6 +40,6 @@ A modern web application that analyzes URLs for potential security threats using
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/anubhab7105/Cyber-Threat-Analyzer.git
+git clone https://github.com/anubhab7105/Cyber-Threat-Analyze
 cd Cyber-Threat-Analyze
 
